@@ -59,7 +59,7 @@ export const createSubscription = async (req, res) => {
 // Get user subscriptions
 export const getUserSubscriptions = async (req, res) => {
   try {
-    const subscriptions = await Subscription.find({ user: req.body.user });
+    const subscriptions = await Subscription.find({ user: req.params.id });
     res.status(200).json(subscriptions);
   } catch (error) {
     res.status(500).json({ message: error.message });

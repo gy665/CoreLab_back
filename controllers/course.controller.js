@@ -51,6 +51,22 @@ export const getCourseAvailability = async (req, res) => {
   };
 
 
+  export const getFutureCourse= async (req, res) => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); 
+  
+      const courses = await Course.find({
+        schedule: { $gte: today } 
+      }).sort({ schedule: 1 }); 
+  
+      res.status(200).json(courses);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+
 
 
 export const createCourse = async (req, res) => {

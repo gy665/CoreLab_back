@@ -4,13 +4,16 @@ import {
   getCourse,
   createCourse,
   updateCourse,
-  deleteCourse
+  deleteCourse,
+  getFutureCourse
 } from '../controllers/course.controller.js';
 
 const router = express.Router();
 
 router.get('/', getCourses);
+router.get('/future', getFutureCourse);
 router.get('/:id', getCourse);
+
 router.post('/', createCourse);
 router.patch('/:id', updateCourse);
 router.delete('/:id', deleteCourse);

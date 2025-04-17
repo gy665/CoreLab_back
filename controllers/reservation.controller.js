@@ -1,12 +1,13 @@
 import Reservation from '../models/reservation.model.js';
 import Course from '../models/course.model.js';
 import { sendReservationNotification } from '../utils/notification.utils.js';
+import User from '../models/user.model.js';
 
 
 export const createReservation = async (req, res) => {
     try {
-        const { courseId, sessionDate, notes } = req.body;
-        const userId = req.user._id;
+        const { user_id,courseId, sessionDate, notes } = req.body;
+        const user = await User.findById(user_id)
 
         const course = await Course.findById(courseId);
         if (!course) return res.status(404).json({ message: 'Course not found' });
@@ -22,7 +23,7 @@ export const createReservation = async (req, res) => {
         }
 
         const reservation = await Reservation.create({
-            user: userId,
+            user: user,
             course: courseId,
             sessionDate,
             notes,
@@ -35,7 +36,7 @@ export const createReservation = async (req, res) => {
 
         // Notification with additional context
         await sendReservationNotification(
-            userId,
+            user,
             reservation._id,
             'created',
             course.title,
@@ -58,7 +59,7 @@ export const updateReservation = async (req, res) => {
     try {
         const { id } = req.params;
         const { sessionDate, notes } = req.body;
-        const userId = req.user._id;
+       
 
         const oldReservation = await Reservation.findById(id);
         if (!oldReservation) {
@@ -66,7 +67,7 @@ export const updateReservation = async (req, res) => {
         }
 
         const reservation = await Reservation.findOneAndUpdate(
-            { _id: id, user: userId },
+            { _id: id, user: oldReservation.user._id },
             { sessionDate, notes },
             { new: true, runValidators: true }
         );
@@ -80,7 +81,7 @@ export const updateReservation = async (req, res) => {
         // Only send notification if date actually changed
         if (sessionDate && oldReservation.sessionDate !== sessionDate) {
             await sendReservationNotification(
-                userId,
+                oldReservation.user._id,
                 reservation._id,
                 'updated',
                 course.title,
@@ -104,11 +105,10 @@ export const updateReservation = async (req, res) => {
 export const cancelReservation = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.user._id;
+    
 
         const reservation = await Reservation.findOneAndDelete({
-            _id: id,
-            user: userId
+            _id: id
         }).populate('course', 'title');
 
         if (!reservation) {
@@ -121,7 +121,7 @@ export const cancelReservation = async (req, res) => {
         );
 
         await sendReservationNotification(
-            userId,
+            reservation.user._id,
             reservation._id,
             'cancelled',
             reservation.course.title,
@@ -147,7 +147,8 @@ export const cancelReservation = async (req, res) => {
 
 export const getUserReservations = async (req, res) => {
     try {
-        const reservations = await Reservation.find({ user: req.user._id })
+        const user = await User.findById(req.params.id)
+        const reservations = await Reservation.find({ user: user })
             .populate('course', 'title coach schedule');
 
         res.status(200).json(reservations);

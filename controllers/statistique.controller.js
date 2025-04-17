@@ -55,3 +55,12 @@ export const getStatistiques = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getCurrentStatistique = async (req, res) => {
+  try {
+    const stats = await Statistique.find().sort({ date: -1 });
+    res.status(200).json(stats[0]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

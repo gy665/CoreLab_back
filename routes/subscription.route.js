@@ -10,7 +10,7 @@ import { protect } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.post('/', createSubscription);
-router.get('/', getUserSubscriptions);
+router.get('/user/:id', getUserSubscriptions);
 router.get('/:id', getSub);
 router.patch('/:id/cancel', cancelSubscription);
 

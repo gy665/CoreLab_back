@@ -9,7 +9,7 @@ import { protect } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.post('/', createReservation);
-router.get('/my-reservations', getUserReservations);
+router.get('/my-reservations/:id', getUserReservations);
 router.delete('/:id', cancelReservation);
 router.patch('/:id', updateReservation);
 

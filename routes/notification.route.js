@@ -8,7 +8,7 @@ import {
 
 const router = express.Router();
 
-router.get('/', getUserNotifications);
+router.get('/:id', getUserNotifications);
 router.patch('/:id/read', markAsRead);
 
 export default router;
