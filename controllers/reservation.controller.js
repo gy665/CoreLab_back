@@ -2,6 +2,7 @@ import Reservation from '../models/reservation.model.js';
 import Course from '../models/course.model.js';
 import { sendReservationNotification } from '../utils/notification.utils.js';
 
+
 export const createReservation = async (req, res) => {
     try {
         const { courseId, sessionDate, notes } = req.body;
