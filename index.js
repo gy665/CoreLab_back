@@ -9,6 +9,7 @@ import reservationRoutes from './routes/reservation.route.js';
 import notificationRoutes from './routes/notification.route.js';
 import statistiqueRoutes from './routes/statistique.routes.js';
 import  chatRoutes  from './routes/chat.route.js';
+import cors from 'cors';
 
 
 
@@ -31,6 +32,12 @@ app.use('/api', chatRoutes);
 app.get('/', (req, res) => {
     res.send("hello from node Api");
 });
+
+app.use(cors({
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 
 //config
 dotenv.config();
