@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import equipmentRoutes from './routes/equipment.route.js'; // also fixed import path
 import authRoutes from './routes/auth.route.js';
 import dotenv from 'dotenv';
-import subscriptionRoutes from './routes/subscription.route.js';
+import subscriptionRoutes from './routes/usersubscription.route.js';
+import subscriptionPlanRoutes from './routes/subscriptionplan.route.js';
 import courseRoutes from './routes/course.route.js';
 import reservationRoutes from './routes/reservation.route.js';
 import notificationRoutes from './routes/notification.route.js';
@@ -22,7 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use("/api/equipments", equipmentRoutes);
 app.use('/api/user', authRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/user-subscriptions', subscriptionRoutes);
+app.use('/api/subscription-plans', subscriptionPlanRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/notifications', notificationRoutes);

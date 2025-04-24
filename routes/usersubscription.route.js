@@ -4,7 +4,7 @@ import {
   cancelSubscription,
   getUserSubscriptions,
   getSub
-} from '../controllers/subscription.controller.js';
+} from '../controllers/usersubscription.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
