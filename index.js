@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import equipmentRoutes from './routes/equipment.route.js'; // also fixed import path
 import authRoutes from './routes/auth.route.js';
+import equipmentPurchaseRoutes from './routes/equipmentpurchase.route.js';
 import dotenv from 'dotenv';
 import subscriptionRoutes from './routes/usersubscription.route.js';
 import subscriptionPlanRoutes from './routes/subscriptionplan.route.js';
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api/equipments", equipmentRoutes);
+app.use('/api/equipment-purchases', equipmentPurchaseRoutes);
 app.use('/api/user', authRoutes);
 app.use('/api/user-subscriptions', subscriptionRoutes);
 app.use('/api/subscription-plans', subscriptionPlanRoutes);
