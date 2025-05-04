@@ -28,3 +28,46 @@ export const markAsRead = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const markAllAsRead = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const result = await Notification.updateMany(
+      { user: user._id, read: false },
+      { $set: { read: true } }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(200).json({ message: 'No unread notifications to mark' });
+    }
+
+    res.status(200).json({ 
+      message: `Marked ${result.modifiedCount} notifications as read`,
+      modifiedCount: result.modifiedCount
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const hasUnreadNotifications = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const count = await Notification.countDocuments({
+      user: user._id,
+      read: false
+    });
+
+    res.status(200).json({ hasUnread: count > 0, count });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
