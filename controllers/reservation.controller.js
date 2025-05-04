@@ -23,7 +23,7 @@ export const createReservation = async (req, res) => {
         }
 
         const reservation = await Reservation.create({
-            user: user,
+            user: user_id,
             course: courseId,
             sessionDate,
             notes,

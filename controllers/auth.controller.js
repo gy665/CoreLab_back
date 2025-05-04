@@ -30,9 +30,18 @@ export const login = async (req, res) => {
     { expiresIn: '1d' }
   );
 
+  const user_loggin = {
+    id : user.id,
+    username : user.username,
+    email: user.email,
+        subscriptions: user.subscriptions,
+        activeSubscription: user.activeSubscription
+  }
+
   res.json({ 
     token,
-    role: user.role // Retourner le rôle au frontend
+    role: user.role,
+    user : user_loggin // Retourner le rôle au frontend
   });
 };
 
