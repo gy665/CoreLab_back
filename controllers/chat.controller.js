@@ -1,5 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
+import Conversation from '../models/conversation.model.js';
 dotenv.config();
 
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
@@ -21,7 +22,8 @@ const sujetsAutorises = [
 ];
 
 export const chatWithBot = async (req, res) => {
-  const { message } = req.body;
+  const { message, userId } = req.body;
+
 
   if (!message) {
     return res.status(400).json({ reply: "❗ Veuillez fournir un message." });
@@ -45,11 +47,44 @@ export const chatWithBot = async (req, res) => {
     // Essayer avec DeepSeek d'abord
     const aiReply = await generateAIResponseWithDeepSeek(message);
     if (aiReply && aiReply.length > 5) {
+      await Conversation.findOneAndUpdate(
+        { userId },
+        {
+          $push: {
+            messages: {
+              $each: [
+                { text: message, isUserMessage: true },
+                { text: aiReply , isUserMessage: false }
+              ]
+            }
+          }
+        },
+        { upsert: true, new: true }
+      );
+
       return res.json({ reply: aiReply });
     }
 
     // Fallback manuel si la réponse est vide ou étrange
     const fallbackReply = generateManualReply(messageClean);
+
+    await Conversation.findOneAndUpdate(
+      { userId },
+      {
+        $push: {
+          messages: {
+            $each: [
+              { text: message, isUserMessage: true },
+              { text: fallbackReply, isUserMessage: false }
+            ]
+          }
+        }
+      },
+      { upsert: true, new: true }
+    );
+
+
+    
     return res.json({ reply: fallbackReply });
 
   } catch (error) {
@@ -123,4 +158,22 @@ function generateManualReply(messageClean) {
   
     return "🤖 Je suis là pour t’aider avec tes questions sportives ! Pose-moi une question sur les cours, coachs, réservations ou équipements.";
   }
+
+
+
+  export const getConversation = async (req, res) => {
+    const { userId } = req.params;
+  
+    try {
+      const convo = await Conversation.findOne({ userId });
+      if (!convo) return res.json({ messages: [] });
+      
+      const sortedMessages = convo.messages.sort((a, b) => a.timestamp - b.timestamp);
+      return res.json({ messages: sortedMessages });
+    } catch (err) {
+      console.error("Error fetching conversation:", err);
+      return res.status(500).json({ error: 'Error retrieving conversation.' });
+    }
+  };
+
   
